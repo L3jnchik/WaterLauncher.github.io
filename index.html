@@ -3,77 +3,216 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>WaterLauncher Project</title>
-    <!-- Подключаем официальный скрипт Supabase -->
+    <title>WaterProject — Комплекс серверов Minecraft</title>
+    <!-- Подключаем иконки FontAwesome для кнопок соцсетей -->
+    <link rel="stylesheet" href="https://cloudflare.com">
+    <!-- Подключаем скрипт Supabase -->
     <script src="https://jsdelivr.net"></script>
+    
     <style>
+        :root {
+            --primary-color: #4fc3f7;
+            --accent-color: #2ecc71;
+            --dark-bg: rgba(20, 20, 20, 0.9);
+            --border-style: 2px solid var(--primary-color);
+        }
+
         body {
             margin: 0;
             padding: 0;
-            font-family: 'Arial', sans-serif;
-            background: linear-gradient(rgba(0, 0, 0, 0.7), rgba(0, 0, 0, 0.7)), 
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(rgba(0, 0, 0, 0.75), rgba(0, 0, 0, 0.75)), 
                         url('https://alphacoders.com') no-repeat center center fixed;
             background-size: cover;
             color: #fff;
-            text-align: center;
         }
-        header { padding: 40px 20px; }
-        .logo { font-size: 3rem; font-weight: bold; text-transform: uppercase; color: #4fc3f7; text-shadow: 3px 3px 0px #000; }
-        
-        /* Стили формы регистрации */
-        .reg-container {
+
+        /* Верхнее меню (Навигация) */
+        nav {
             background: rgba(0, 0, 0, 0.85);
-            border: 2px solid #4fc3f7;
-            border-radius: 10px;
-            padding: 30px;
-            width: 320px;
-            margin: 20px auto;
-            box-shadow: 0 0 15px rgba(79, 195, 247, 0.3);
+            border-bottom: 2px solid #222;
+            padding: 15px 50px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            position: sticky;
+            top: 0;
+            z-index: 100;
         }
-        .reg-container h2 { margin-top: 0; color: #4fc3f7; }
+        nav .brand {
+            font-size: 1.8rem;
+            font-weight: bold;
+            color: var(--primary-color);
+            text-shadow: 2px 2px 0px #000;
+            text-decoration: none;
+        }
+        nav .menu-links a {
+            color: #bbb;
+            text-decoration: none;
+            margin-left: 25px;
+            font-weight: 500;
+            transition: 0.3s;
+        }
+        nav .menu-links a:hover {
+            color: var(--primary-color);
+        }
+
+        /* Главный контейнер */
+        .container {
+            max-width: 1200px;
+            margin: 40px auto;
+            padding: 0 20px;
+            display: grid;
+            grid-template-columns: 2fr 1fr;
+            gap: 30px;
+        }
+
+        @media (max-width: 900px) {
+            .container { grid-template-columns: 1fr; }
+        }
+
+        /* Основной контент (Новости) */
+        .main-content h2, .sidebar h3 {
+            color: var(--primary-color);
+            border-bottom: 2px solid #333;
+            padding-bottom: 10px;
+            margin-top: 0;
+        }
+        .news-card {
+            background: var(--dark-bg);
+            border-left: 5px solid var(--primary-color);
+            border-radius: 4px;
+            padding: 20px;
+            margin-bottom: 20px;
+        }
+        .news-card .news-date {
+            font-size: 0.85rem;
+            color: #888;
+            margin-bottom: 10px;
+        }
+        .news-card h3 { margin: 0 0 10px 0; color: #fff; }
+
+        /* Боковая панель (Сайдбар) */
+        .sidebar-block {
+            background: var(--dark-bg);
+            border: 1px solid #333;
+            border-radius: 8px;
+            padding: 25px;
+            margin-bottom: 25px;
+        }
+
+        /* Социальные кнопки */
+        .social-buttons {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+        }
+        .btn-social {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+            padding: 12px;
+            border-radius: 5px;
+            color: #fff;
+            text-decoration: none;
+            font-weight: bold;
+            transition: 0.3s;
+        }
+        .btn-discord { background: #5865F2; }
+        .btn-discord:hover { background: #4752C4; }
+        .btn-youtube { background: #FF0000; }
+        .btn-youtube:hover { background: #CC0000; }
+
+        /* Форма регистрации */
         .input-field {
             width: 100%;
-            padding: 10px;
+            padding: 12px;
             margin: 10px 0;
-            border: 1px solid #4fc3f7;
+            border: 1px solid #444;
             border-radius: 4px;
-            background: #1a1a1a;
+            background: #111;
             color: #fff;
             box-sizing: border-box;
         }
+        .input-field:focus { border-color: var(--primary-color); outline: none; }
         .btn-submit {
             width: 100%;
             padding: 12px;
-            background: #2ecc71;
+            background: var(--accent-color);
             border: none;
             color: white;
             font-weight: bold;
             cursor: pointer;
             border-radius: 4px;
             font-size: 1rem;
-            transition: 0.2s;
+            box-shadow: 0 4px 0 #27ae60;
         }
         .btn-submit:hover { background: #27ae60; }
-        #message { margin-top: 15px; font-weight: bold; }
+        #message { margin-top: 15px; text-align: center; font-weight: bold; }
     </style>
 </head>
 <body>
 
-    <header>
-        <div class="logo">💥 WaterProject 💥</div>
-        <p>Создай аккаунт для игры на сервере 1.16.5!</p>
-    </header>
-      <!-- Форма регистрации -->
-    <div class="reg-container">
-        <h2>Регистрация</h2>
-        <!-- Важно: убрали метод отправки по умолчанию, теперь всем управляет скрипт -->
-        <form id="regForm" onsubmit="return false;">
-            <input type="text" id="username" class="input-field" placeholder="Никнейм (от 3 до 16 симв.)" required maxlength="16">
-            <input type="password" id="password" class="input-field" placeholder="Пароль" required>
-            <!-- Изменили тип кнопки на обычную, чтобы она гарантированно не перезагружала страницу -->
-            <button type="button" id="submitBtn" class="btn-submit">Создать аккаунт</button>
-        </form>
-        <div id="message"></div>
+    <!-- Шапка сайта -->
+    <nav>
+        <a href="#" class="brand">🌊 WATERPROJECT</a>
+        <div class="menu-links">
+            <a href="#news"><i class="fa-solid fa-newspaper"></i> Новости</a>
+            <a href="https://discord.com" target="_blank"><i class="fa-brands fa-discord"></i> Discord</a>
+            <a href="https://youtube.com" target="_blank"><i class="fa-brands fa-youtube"></i> YouTube</a>
+        </div>
+    </nav>
+
+    <!-- Основная часть сайта -->
+    <div class="container">
+        
+        <!-- Левая колонка: Лента новостей -->
+        <div class="main-content" id="news">
+            <h2>Последние новости</h2>
+            
+            <div class="news-card">
+                <div class="news-date">7 июня 2026 г.</div>
+                <h3>Глобальное обновление сервера 1.16.5!</h3>
+                <p>Мы рады объявить о завершении технических работ. Была полностью обновлена генерация основного мира, добавлены новые уникальные квесты для игроков и оптимизирована работа кастомного лаунчера. Скачивайте обновление и залетайте на сервер!</p>
+            </div>
+
+            <div class="news-card">
+                <div class="news-date">1 июня 2026 г.</div>
+                <h3>Открытие проекта WaterProject 🎉</h3>
+                <p>Добро пожаловать на наш игровой портал! Мы запускаем бета-тестирование нашего первого игрового выживания. Регистрируйте аккаунты прямо сейчас, чтобы зарезервировать свой игровой никнейм.</p>
+            </div>
+        </div>
+
+        <!-- Правая колонка: Форма и Соцсети -->
+        <div class="sidebar">
+            
+            <!-- Блок авторизации/регистрации -->
+            <div class="sidebar-block">
+                <h3>Личный кабинет</h3>
+                <form id="regForm" onsubmit="return false;">
+                    <input type="text" id="username" class="input-field" placeholder="Ваш игровой никнейм" required maxlength="16">
+                    <input type="password" id="password" class="input-field" placeholder="Придумайте пароль" required>
+                    <button type="button" id="submitBtn" class="btn-submit">Создать аккаунт</button>
+                </form>
+                <div id="message"></div>
+            </div>
+
+            <!-- Блок социальных сетей -->
+            <div class="sidebar-block">
+                <h3>Наши сообщества</h3>
+                <div class="social-buttons">
+                    <!-- Замените '#' на реальные ссылки на ваши каналы -->
+                    <a href="#" target="_blank" class="btn-social btn-discord">
+                        <i class="fa-brands fa-discord fa-lg"></i> Наш Discord сервер
+                    </a>
+                    <a href="#" target="_blank" class="btn-social btn-youtube">
+                        <i class="fa-brands fa-youtube fa-lg"></i> Наш YouTube канал
+                    </a>
+                </div>
+            </div>
+
+        </div>
     </div>
 
     <script>
@@ -81,10 +220,8 @@
         const SUPABASE_URL = "https://hqedflvozrymweaueymk.supabase.co/rest/v1/";
         const SUPABASE_KEY = "sb_publishable_AhbI07QUWbsjEy-16VJ4zw_ymUbQ7sL";
         
-        // Исправили инициализацию клиента Supabase
         const supabase = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
 
-        // Привязываем действие напрямую к клику по кнопке, исключая отправку формы
         document.getElementById('submitBtn').addEventListener('click', async () => {
             const msgDiv = document.getElementById('message');
             msgDiv.innerText = "Обработка...";
@@ -93,7 +230,6 @@
             const username = document.getElementById('username').value.trim();
             const password = document.getElementById('password').value;
 
-            // Проверка длины никнейма
             if (username.length < 3 || username.length > 16) {
                 msgDiv.innerText = "Ник должен быть от 3 до 16 символов!";
                 msgDiv.style.color = "#e74c3c";
@@ -101,13 +237,11 @@
             }
 
             try {
-                // Отправляем данные в таблицу 'users'
                 const { data, error } = await supabase
                     .from('users')
                     .insert([{ username: username, password_hash: password }]);
 
                 if (error) {
-                    // Обработка ошибки, если ник уже существует
                     if (error.code === '23505') {
                         msgDiv.innerText = "Этот никнейм уже занят!";
                     } else {
@@ -117,14 +251,12 @@
                 } else {
                     msgDiv.innerText = "Вы успешно зарегистрированы!";
                     msgDiv.style.color = "#2ecc71";
-                    // Очищаем поля ввода после успеха
                     document.getElementById('username').value = "";
                     document.getElementById('password').value = "";
                 }
             } catch (err) {
                 msgDiv.innerText = "Сбой соединения с базой.";
                 msgDiv.style.color = "#e74c3c";
-                console.error(err);
             }
         });
     </script>
