@@ -63,14 +63,15 @@
         <div class="logo">💥 WaterProject 💥</div>
         <p>Создай аккаунт для игры на сервере 1.16.5!</p>
     </header>
-
-    <!-- Форма регистрации -->
+      <!-- Форма регистрации -->
     <div class="reg-container">
         <h2>Регистрация</h2>
-        <form id="regForm">
-            <input type="text" id="username" class="input-field" placeholder="Никнейм (от 3 до 16 симв.)" required maxsize="16">
+        <!-- Важно: убрали метод отправки по умолчанию, теперь всем управляет скрипт -->
+        <form id="regForm" onsubmit="return false;">
+            <input type="text" id="username" class="input-field" placeholder="Никнейм (от 3 до 16 симв.)" required maxlength="16">
             <input type="password" id="password" class="input-field" placeholder="Пароль" required>
-            <button type="submit" class="btn-submit">Создать аккаунт</button>
+            <!-- Изменили тип кнопки на обычную, чтобы она гарантированно не перезагружала страницу -->
+            <button type="button" id="submitBtn" class="btn-submit">Создать аккаунт</button>
         </form>
         <div id="message"></div>
     </div>
@@ -80,10 +81,11 @@
         const SUPABASE_URL = "https://hqedflvozrymweaueymk.supabase.co/rest/v1/";
         const SUPABASE_KEY = "sb_publishable_AhbI07QUWbsjEy-16VJ4zw_ymUbQ7sL";
         
-        const supabase = @supabase/supabase-js.createClient(SUPABASE_URL, SUPABASE_KEY);
+        // Исправили инициализацию клиента Supabase
+        const supabase = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
 
-        document.getElementById('regForm').addEventListener('submit', async (e) => {
-            e.preventDefault();
+        // Привязываем действие напрямую к клику по кнопке, исключая отправку формы
+        document.getElementById('submitBtn').addEventListener('click', async () => {
             const msgDiv = document.getElementById('message');
             msgDiv.innerText = "Обработка...";
             msgDiv.style.color = "#fff";
@@ -91,7 +93,7 @@
             const username = document.getElementById('username').value.trim();
             const password = document.getElementById('password').value;
 
-            // Валидация никнейма (стандарт Minecraft)
+            // Проверка длины никнейма
             if (username.length < 3 || username.length > 16) {
                 msgDiv.innerText = "Ник должен быть от 3 до 16 символов!";
                 msgDiv.style.color = "#e74c3c";
@@ -99,13 +101,13 @@
             }
 
             try {
-                // Отправляем запрос на вставку строки в таблицу 'users'
+                // Отправляем данные в таблицу 'users'
                 const { data, error } = await supabase
                     .from('users')
-                    .insert([{ username: username, password_hash: password }]); // Пока пишем пароль текстом, позже добавим хэширование
+                    .insert([{ username: username, password_hash: password }]);
 
                 if (error) {
-                    // Если никнейм уже занят, база вернет ошибку уникальности (код 23505)
+                    // Обработка ошибки, если ник уже существует
                     if (error.code === '23505') {
                         msgDiv.innerText = "Этот никнейм уже занят!";
                     } else {
@@ -115,11 +117,14 @@
                 } else {
                     msgDiv.innerText = "Вы успешно зарегистрированы!";
                     msgDiv.style.color = "#2ecc71";
-                    document.getElementById('regForm').reset();
+                    // Очищаем поля ввода после успеха
+                    document.getElementById('username').value = "";
+                    document.getElementById('password').value = "";
                 }
             } catch (err) {
                 msgDiv.innerText = "Сбой соединения с базой.";
                 msgDiv.style.color = "#e74c3c";
+                console.error(err);
             }
         });
     </script>
